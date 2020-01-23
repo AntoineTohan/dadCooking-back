@@ -18,7 +18,7 @@ Installation Git : https://gitforfedora.org/
 
 Installation container mysql et configuration ports/volumes
 
-```docker pull mysql```
+```docker pull mysql:5.7```
 
 Create mysql container
 
