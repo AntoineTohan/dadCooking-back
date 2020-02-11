@@ -16,15 +16,17 @@ Installation Git : https://gitforfedora.org/
  - Git pull sur le projet
  - Apprendre par 💖 GitFlow
 
- If u had an bash terminal go on root folder of project  and use these two commands :
+Si vous avez un terminal linux lancer ces commandes  :
+
+```cd future-tracking-java```
 
 ```chmod +x ./prepare_env.sh```
 
 ```./prepare_env.sh```
 
-OR 
+OU
 
-if not working use this command :
+Sinon lancer ces deux commandes :
 
 ```docker pull mysql:5.7 && docker run -p 3306:3306 --name dadcooking-db -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=dadcooking -d mysql:5.7```
 
