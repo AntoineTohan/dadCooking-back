@@ -30,4 +30,4 @@ Sinon lancer ces deux commandes :
 
 ```docker pull mysql:5.7 && docker run -p 3306:3306 --name dadcooking-db -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=dadcooking -d mysql:5.7```
 
-And launch the spring boot project in your IDE
+Ensuite lancer le projet Java dans votre IDE.
