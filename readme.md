@@ -1,4 +1,6 @@
-AVOIR UN MAC/LINUX OU W10 PRO Installation JDK Java 8 Stable (Maven intégré dans IntelliJ : non.) : https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+Avoir un Mac/Linux OU Windows 10 PRO pour le temrinal shell / bash
+
+Installation JDK Java 8 Stable (Maven intégré dans IntelliJ : non.) : https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 
 Installation Intellij Idea https://www.jetbrains.com/idea/download/
 
