@@ -16,23 +16,16 @@ Installation Git : https://gitforfedora.org/
  - Git pull sur le projet
  - Apprendre par 💖 GitFlow
 
-Installation container mysql et configuration ports/volumes
+ If u had an bash terminal go on root folder of project 
 
-```docker pull mysql:5.7```
+```chmod +x ./prepare_env.sh```
 
-Create mysql container
+```./prepare_env.sh```
 
-```docker run -p 3306:3306 --name dadcooking-db -e MYSQL_ROOT_PASSWORD=password -d mysql:5.7```
+OR 
 
-Connect to the console
+if not working use this command :
 
-```docker exec -it dadcooking-db mysql -uroot -ppassword```
+```docker pull mysql:5.7 && docker run -p 3306:3306 --name dadcooking-db -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=dadcooking -d mysql:5.7```
 
-
-If first time u launch project : Create DATABASE
-
-```CREATE DATABASE dadcooking;```
-```USE dadcooking;```
-
-And launch the spring boot project
-
+And launch the spring boot project in your IDE
