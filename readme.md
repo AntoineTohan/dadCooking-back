@@ -16,7 +16,7 @@ Installation Git : https://gitforfedora.org/
  - Git pull sur le projet
  - Apprendre par 💖 GitFlow
 
- If u had an bash terminal go on root folder of project 
+ If u had an bash terminal go on root folder of project  and use these two commands :
 
 ```chmod +x ./prepare_env.sh```
 
