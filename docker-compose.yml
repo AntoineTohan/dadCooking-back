@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  jenkins:
+    image: 'jenkins/jenkins:lts'
+    container_name: jenkins
+    hostname: jenkins
+    networks: 
+      - net_integration
+    ports:
+      - '8080:8080'
+      - '50000:50000'
+    volumes:
+      - './jenkins:/var/jenkins_home'
+
+  sonarqube:
+    image: 'sonarqube'
+    container_name: sonarqube
+    hostname: sonarqube
+    networks: 
+      - net_integration
+    ports: 
+      - 9000:9000
+    volumes:
+      - ./sonarqube/conf:/opt/sonarqube/conf
+      - ./sonarqube/extensions:/opt/sonarqube/extensions
+      - ./sonarqube/logs:/opt/sonarqube/logs
+      - ./sonarqube/data:/opt/sonarqube/data
+
+networks:
+  net_integration:

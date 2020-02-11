@@ -33,3 +33,14 @@ Sinon lancer ces deux commandes :
 ```docker pull mysql:5.7 && docker run -p 3306:3306 --name dadcooking-db -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=dadcooking -d mysql:5.7```
 
 Ensuite lancer le projet Java dans votre IDE.
+
+
+Pour les devellopeurs et les deploiements de platfrome de dev pour mettre en place la CI il suffit du server Jenkins et Sonarqube. 
+
+Pour les lancer facilement avec docker et qu'ils puissent communiquer nous avons mis en place un docker-compose file qui démarre les deux services.
+
+Démarrer tous les services avec le Docker-compose : docker-compose up -d
+
+Mettre en pause les containers avec : ```docker-compose stop```
+
+Supprimer tous les services avec le Docker-compose : **Attention la suppression vous fera perdre toute votre configuration ```docker-compose down```**

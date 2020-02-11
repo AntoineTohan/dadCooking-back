@@ -7,3 +7,5 @@ pom.xml.versionsBackup
 pom.xml.next
 .idea/
 target/
+/jenkins
+/sonarqube
