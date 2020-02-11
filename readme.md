@@ -11,7 +11,7 @@ Installation Docker: https://www.docker.com/ ( pour installation d’un mysql en
 Installation Git : https://gitforfedora.org/
 
  - Configuration compte git (pour avoir les droit sur le repo)
- - Git clone le projet (git clone https://github.com/AntoineTohan/DadCooking-)
+ - Git clone le projet (git clone https://github.com/AntoineTohan/future-tracking-java.git)
  - Git add remote upstream (les repos remotes)
  - Git pull sur le projet
  - Apprendre par 💖 GitFlow
