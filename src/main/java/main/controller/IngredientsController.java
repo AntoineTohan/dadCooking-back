@@ -1,6 +1,6 @@
 package main.controller;
 
-import main.TObj.TIngredients;
+import main.tobj.TIngredients;
 import main.entity.Food;
 import main.entity.Ingredients;
 import main.exception.IngredientNotFoundException;
@@ -21,18 +21,18 @@ public class IngredientsController {
 
 
     @GetMapping("/ingredients")
-    Iterable<Ingredients> all() {
+    public Iterable<Ingredients> all() {
         return ingredientsRepository.findAll();
     }
 
     @GetMapping("/ingredient/{id}")
-    Ingredients one(@PathVariable Long id) {
+    public Ingredients one(@PathVariable Long id) {
         return ingredientsRepository.findById(id)
                 .orElseThrow(() -> new IngredientNotFoundException (id));
     }
 
     @PostMapping("/ingredient")
-    String newTIngredient(@RequestBody TIngredients newTIngredient) {
+    public String newTIngredient(@RequestBody TIngredients newTIngredient) {
         Food food = foodRepository.findById (newTIngredient.getFoodId ()) .orElseThrow(() -> new IngredientNotFoundException (newTIngredient.getFoodId ()));
         Ingredients ingredient = new Ingredients (food,newTIngredient.getQuantite (),newTIngredient.getUnite ());
         ingredientsRepository.save(ingredient);
@@ -40,7 +40,7 @@ public class IngredientsController {
     }
 
     @DeleteMapping("/ingredient/{id}")
-    void deleteIngredient(@PathVariable Long id) {
+    public void deleteIngredient(@PathVariable Long id) {
         ingredientsRepository.deleteById(id);
         logger.info("Removed from database! ");
     }

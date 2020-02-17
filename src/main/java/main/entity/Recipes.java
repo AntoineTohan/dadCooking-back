@@ -9,8 +9,9 @@ public class Recipes {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
     private String name;
+    @Column(columnDefinition = "TEXT")
     private String preparation;
-    @OneToMany
+    @ManyToMany
     List<Ingredients> ingredients;
 
     public Recipes (String name, String preparation, List<Ingredients> ingredients) {

@@ -2,7 +2,7 @@
 <Configuration status="DEBUG">
     <Appenders>
         <Console name="LogToConsole" target="SYSTEM_OUT">
-            <PatternLayout pattern="LOG4J2 : %d{DD/MM/YYYY HH:mm:ss,SSS} %-5level (%logger{36}:%L) - %msg%n"/>
+            <PatternLayout pattern="%d{dd/MM/yyyy HH:mm:ss,SSS} %-5level (%logger{36}:%L) - %msg%n"/>
         </Console>
         <File name="LogToFile" fileName="logs/dadCooking.log">
             <PatternLayout>

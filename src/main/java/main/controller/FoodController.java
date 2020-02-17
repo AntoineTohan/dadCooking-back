@@ -1,5 +1,6 @@
 package main.controller;
 
+import main.tobj.TFood;
 import main.entity.Food;
 import main.exception.FoodNotFoundException;
 import main.repository.FoodRepository;
@@ -15,30 +16,31 @@ public class FoodController {
     private FoodRepository foodRepository;
 
     @GetMapping("/foods")
-    Iterable<Food> all() {
+    public Iterable<Food> all() {
         return foodRepository.findAll();
     }
 
     @GetMapping("/food/{id}")
-    Food one(@PathVariable Long id) {
+    public Food one(@PathVariable Long id) {
         return foodRepository.findById(id)
                 .orElseThrow(() -> new FoodNotFoundException (id));
     }
 
     @PostMapping("/food")
-    String newFood(@RequestBody Food newFood) {
-        Long exist = foodRepository.countByName(newFood.getName ());
-        if(exist > 0) {
+    public String newFood(@RequestBody TFood newFood) {
+        Food exist = foodRepository.findByName (newFood.getName ());
+        if(exist != null) {
             logger.warn("Already in database !");
             return "Already in database !";
         } else {
-            foodRepository.save (newFood);
+            Food foodDTONew = new Food (newFood.getName ());
+            foodRepository.save (foodDTONew);
             return "Inserted";
         }
     }
 
     @DeleteMapping("/food/{id}")
-    void deleteFood(@PathVariable Long id) {
+    public void deleteFood(@PathVariable Long id) {
         foodRepository.deleteById(id);
         logger.info("Removed from database! ");
     }

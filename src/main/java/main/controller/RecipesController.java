@@ -4,14 +4,14 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import main.TObj.TPdfRecipes;
-import main.TObj.TRecipes;
+import main.tobj.TPdfRecipes;
+import main.tobj.TRecipes;
 import main.entity.Ingredients;
 import main.entity.Recipes;
 import main.exception.RecipeNotFoundException;
 import main.repository.IngredientRepository;
 import main.repository.RecipesRepository;
-import org.apache.commons.io.IOUtils;
+import main.utils.Unit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +20,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.swing.filechooser.FileSystemView;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -41,19 +38,19 @@ public class RecipesController {
 
 
     @GetMapping("/recipes")
-    Iterable<Recipes> all() {
+    public Iterable<Recipes> all() {
         return recipesRepository.findAll();
     }
 
     @GetMapping("/recipe/{id}")
-    Recipes one(@PathVariable Long id) {
+    public Recipes one(@PathVariable Long id) {
         return recipesRepository.findById(id)
                 .orElseThrow(() -> new RecipeNotFoundException (id));
     }
 
     @PostMapping("/recipe")
-    String newRecipe(@RequestBody TRecipes newTRecipe) {
-        List<Ingredients> listCurrentIngredients = new ArrayList<Ingredients> ();
+    public String newRecipe(@RequestBody TRecipes newTRecipe) {
+        List<Ingredients> listCurrentIngredients = new ArrayList<> ();
         for (Long ingredientid :newTRecipe.getIngredientsIds ()) {
             Ingredients ingredient = ingredientsRepository.findById (ingredientid) .orElseThrow(() -> new RecipeNotFoundException (ingredientid));
             listCurrentIngredients.add (ingredient);
@@ -71,13 +68,12 @@ public class RecipesController {
         String filename = "recipes.pdf";
         headers.setContentDispositionFormData(filename, filename);
         headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-        ResponseEntity<byte[]> response = new ResponseEntity<>(contents, headers, HttpStatus.OK);
-        return response;
+        return new ResponseEntity<>(contents, headers, HttpStatus.OK);
     }
 
     @PostMapping(value = "/recipe-create-pdf", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    String newPdfRecipe(@RequestBody TPdfRecipes newTPdfRecipe) {
-        List<Recipes> listCurrentRecipes = new ArrayList<Recipes> ();
+    public String newPdfRecipe(@RequestBody TPdfRecipes newTPdfRecipe) {
+        List<Recipes> listCurrentRecipes = new ArrayList<> ();
         for (Long recipeid :newTPdfRecipe.getRecipeIds ()) {
             Recipes recipe = recipesRepository.findById (recipeid) .orElseThrow(() -> new RecipeNotFoundException (recipeid));
             listCurrentRecipes.add (recipe);
@@ -94,7 +90,11 @@ public class RecipesController {
             cell.addElement(new Phrase("Name: " + recipe.getName ()));
             cell.addElement(new Phrase("Ingredient : " ));
             for (Ingredients ingredient: recipe.getIngredients ()) {
-                cell.addElement(new Phrase("- " +  ingredient.getQuantite () + " " + ingredient.getUnite () + " "+ ingredient.getFood ().getName ()));
+                if(ingredient.getUnite () == Unit.NONE){
+                    cell.addElement(new Phrase("- " +  ingredient.getQuantite () + " "+ ingredient.getFood ().getName ()));
+                }else {
+                    cell.addElement(new Phrase("- " +  ingredient.getQuantite () + " " + ingredient.getUnite () + " "+ ingredient.getFood ().getName ()));
+                }
             }
             cell.addElement(new Phrase("Preparation: " + recipe.getPreparation ()));
             cell.setColspan (1);
@@ -102,16 +102,14 @@ public class RecipesController {
         }
         document.add(table);
         document.close();
-        } catch (DocumentException e) {
-            e.printStackTrace ();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace ();
+        } catch (DocumentException|FileNotFoundException e) {
+            throw new RecipeNotFoundException (e.getMessage ());
         }
         return "Correct pdf generation ! ";
     }
 
     @DeleteMapping("/recipe/{id}")
-    void deleteRecipe(@PathVariable Long id) {
+    public void deleteRecipe(@PathVariable Long id) {
         recipesRepository.deleteById(id);
         logger.info("Removed from database! ");
     }

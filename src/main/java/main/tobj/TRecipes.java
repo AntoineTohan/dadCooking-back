@@ -1,4 +1,4 @@
-package main.TObj;
+package main.tobj;
 
 import java.util.List;
 
@@ -24,20 +24,20 @@ public class TRecipes {
         this.id = id;
     }
 
-    public String getName () {
-        return name;
-    }
-
-    public void setName (String name) {
-        this.name = name;
-    }
-
     public String getPreparation () {
         return preparation;
     }
 
     public void setPreparation (String preparation) {
         this.preparation = preparation;
+    }
+
+    public String getName () {
+        return name;
+    }
+
+    public void setName (String name) {
+        this.name = name;
     }
 
     public List<Long> getIngredientsIds () {
