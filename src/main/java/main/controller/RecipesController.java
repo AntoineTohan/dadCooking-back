@@ -26,8 +26,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @RestController
 public class RecipesController {
     private static final Logger logger = LogManager.getLogger(RecipesController.class);
@@ -48,8 +51,9 @@ public class RecipesController {
                 .orElseThrow(() -> new RecipeNotFoundException (id));
     }
 
-    @PostMapping("/recipe")
-    public String newRecipe(@RequestBody TRecipes newTRecipe) {
+    @PostMapping(value = "/recipe",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, String> newRecipe(@RequestBody TRecipes newTRecipe) {
         List<Ingredients> listCurrentIngredients = new ArrayList<> ();
         for (Long ingredientid :newTRecipe.getIngredientsIds ()) {
             Ingredients ingredient = ingredientsRepository.findById (ingredientid) .orElseThrow(() -> new RecipeNotFoundException (ingredientid));
@@ -57,7 +61,7 @@ public class RecipesController {
         }
         Recipes recipe = new Recipes (newTRecipe.getName (),newTRecipe.getPreparation (),listCurrentIngredients);
         recipesRepository.save(recipe);
-        return "Inserted";
+        return Collections.singletonMap("response", "Inserted");
     }
 
     @GetMapping(value = "/recipe-get-pdf", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -71,10 +75,12 @@ public class RecipesController {
         return new ResponseEntity<>(contents, headers, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/recipe-create-pdf", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public String newPdfRecipe(@RequestBody TPdfRecipes newTPdfRecipe) {
+    @PostMapping(value = "/recipe-create-pdf", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, String> newPdfRecipe(@RequestBody TPdfRecipes newTPdfRecipe) {
         List<Recipes> listCurrentRecipes = new ArrayList<> ();
+        System.out.println (newTPdfRecipe.getRecipeIds ());
         for (Long recipeid :newTPdfRecipe.getRecipeIds ()) {
+            System.out.println (recipeid);
             Recipes recipe = recipesRepository.findById (recipeid) .orElseThrow(() -> new RecipeNotFoundException (recipeid));
             listCurrentRecipes.add (recipe);
             logger.info(recipe);
@@ -83,34 +89,95 @@ public class RecipesController {
         Document document = new Document();
         PdfWriter.getInstance(document, new FileOutputStream ("./pdf/recipes.pdf"));
         document.open();
-        PdfPTable table = new PdfPTable(1);
-
         for (Recipes recipe :listCurrentRecipes) {
-            PdfPCell cell = new PdfPCell ();
-            cell.addElement(new Phrase("Name: " + recipe.getName ()));
-            cell.addElement(new Phrase("Ingredient : " ));
+            PdfPTable table = new PdfPTable(1);
+            table.setKeepTogether(true);
+            PdfPCell cellTitle = new PdfPCell ();
+            PdfPCell cellIngredient = new PdfPCell ();
+            PdfPCell cellPreparation = new PdfPCell ();
+
+            Font fTitle = new Font();
+            fTitle.setStyle(Font.BOLD);
+            fTitle.setSize(20);
+            Paragraph title = new Paragraph(recipe.getName () + "\n\n" ,fTitle);
+            title.setAlignment(Element.ALIGN_CENTER);
+            cellTitle.addElement(title);
+
+            Font fIngredients = new Font();
+            fIngredients.setSize(16);
+            Paragraph ingredients = new Paragraph("\n",fIngredients);
+            cellIngredient.addElement(ingredients);
             for (Ingredients ingredient: recipe.getIngredients ()) {
                 if(ingredient.getUnite () == Unit.NONE){
-                    cell.addElement(new Phrase("- " +  ingredient.getQuantite () + " "+ ingredient.getFood ().getName ()));
-                }else {
-                    cell.addElement(new Phrase("- " +  ingredient.getQuantite () + " " + ingredient.getUnite () + " "+ ingredient.getFood ().getName ()));
+                    cellIngredient.addElement(new Paragraph("- " +  ingredient.getQuantite () + " "+ ingredient.getFood ().getName ().toLowerCase (), fIngredients));
+                } else if(ingredient.getUnite () == Unit.GRAMME) {
+                    if(ingredient.getQuantite () > 1) {
+                        cellIngredient.addElement(new Paragraph("- " +  ingredient.getQuantite () + " grammes de "+ ingredient.getFood ().getName ().toLowerCase (), fIngredients));
+                    } else {
+                        cellIngredient.addElement(new Paragraph("- " +  ingredient.getQuantite () + " gramme de "+ ingredient.getFood ().getName ().toLowerCase (), fIngredients));
+                    }
+                } else if(ingredient.getUnite () == Unit.KILO) {
+                    if(ingredient.getQuantite () > 1) {
+                        cellIngredient.addElement(new Paragraph("- " +  ingredient.getQuantite () + " kilos de "+ ingredient.getFood ().getName ().toLowerCase (), fIngredients));
+                    } else {
+                        cellIngredient.addElement(new Paragraph("- " +  ingredient.getQuantite () + " kilo de "+ ingredient.getFood ().getName ().toLowerCase (), fIngredients));
+                    }
+                } else if(ingredient.getUnite () == Unit.LITRE) {
+                    if(ingredient.getQuantite () > 1) {
+                        cellIngredient.addElement(new Paragraph("- " +  ingredient.getQuantite () + " litres de "+ ingredient.getFood ().getName ().toLowerCase (), fIngredients));
+                    } else {
+                        cellIngredient.addElement(new Paragraph("- " +  ingredient.getQuantite () + " litre de "+ ingredient.getFood ().getName ().toLowerCase (), fIngredients));
+                    }
+                }
+                else if(ingredient.getUnite () == Unit.MILLILITRE) {
+                    if(ingredient.getQuantite () > 1) {
+                        cellIngredient.addElement(new Paragraph("- " +  ingredient.getQuantite () + " millilitres de "+ ingredient.getFood ().getName ().toLowerCase (), fIngredients));
+                    } else {
+                        cellIngredient.addElement(new Paragraph("- " +  ingredient.getQuantite () + " millilitre de "+ ingredient.getFood ().getName ().toLowerCase (), fIngredients));
+                    }
+                }
+                else if(ingredient.getUnite () == Unit.CENTILITRE) {
+                    if(ingredient.getQuantite () > 1) {
+                        cellIngredient.addElement(new Paragraph("- " +  ingredient.getQuantite () + " centilitres de "+ ingredient.getFood ().getName ().toLowerCase (), fIngredients));
+                    } else {
+                        cellIngredient.addElement(new Paragraph("- " +  ingredient.getQuantite () + " centilitre de "+ ingredient.getFood ().getName ().toLowerCase (), fIngredients));
+                    }
                 }
             }
-            cell.addElement(new Phrase("Preparation: " + recipe.getPreparation ()));
-            cell.setColspan (1);
-            table.addCell (cell);
+            cellIngredient.addElement(new Paragraph("\n"));
+
+            Font fPreparation = new Font();
+            fPreparation.setStyle(Font.ITALIC);
+            fPreparation.setSize(14);
+            cellPreparation.addElement(new Paragraph("Preparation : \n\n" + recipe.getPreparation () + "\n\n", fPreparation));
+            cellPreparation.setBorder(Rectangle.BOTTOM | Rectangle.RIGHT| Rectangle.LEFT| Rectangle.TOP);
+
+            cellTitle.setBorder(Rectangle.BOTTOM | Rectangle.TOP | Rectangle.LEFT | Rectangle.RIGHT);
+            cellTitle.setHorizontalAlignment(Element.ALIGN_CENTER);
+            table.addCell (cellTitle);
+
+            cellIngredient.setBorder(Rectangle.BOTTOM | Rectangle.TOP | Rectangle.LEFT | Rectangle.RIGHT);
+            cellIngredient.setHorizontalAlignment(Element.ALIGN_LEFT);
+            table.addCell (cellIngredient);
+
+            cellPreparation.setBorder(Rectangle.BOTTOM | Rectangle.TOP | Rectangle.LEFT | Rectangle.RIGHT);
+            cellPreparation.setHorizontalAlignment(Element.ALIGN_LEFT);
+            table.addCell (cellPreparation);
+
+            document.add(table);
         }
-        document.add(table);
         document.close();
         } catch (DocumentException|FileNotFoundException e) {
             throw new RecipeNotFoundException (e.getMessage ());
         }
-        return "Correct pdf generation ! ";
+        return Collections.singletonMap("response", "Correct pdf generation");
     }
 
-    @DeleteMapping("/recipe/{id}")
-    public void deleteRecipe(@PathVariable Long id) {
+    @DeleteMapping(value = "/recipe/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, String> deleteRecipe(@PathVariable Long id) {
         recipesRepository.deleteById(id);
-        logger.info("Removed from database! ");
+        logger.info("Removed from database");
+        return Collections.singletonMap("response", "Removed from database");
     }
 }

@@ -9,8 +9,13 @@ import main.repository.IngredientRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.Map;
+
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @RestController
 public class IngredientsController {
     private static final Logger logger = LogManager.getLogger(IngredientsController.class);
@@ -31,17 +36,26 @@ public class IngredientsController {
                 .orElseThrow(() -> new IngredientNotFoundException (id));
     }
 
-    @PostMapping("/ingredient")
-    public String newTIngredient(@RequestBody TIngredients newTIngredient) {
+    @PostMapping(value = "/ingredient",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, String> newTIngredient(@RequestBody TIngredients newTIngredient) {
         Food food = foodRepository.findById (newTIngredient.getFoodId ()) .orElseThrow(() -> new IngredientNotFoundException (newTIngredient.getFoodId ()));
         Ingredients ingredient = new Ingredients (food,newTIngredient.getQuantite (),newTIngredient.getUnite ());
-        ingredientsRepository.save(ingredient);
-        return "Inserted";
+        Ingredients existIngredient = ingredientsRepository.findByFoodAndQuantiteAndUnite (food,ingredient.getQuantite (), ingredient.getUnite () );
+        if(existIngredient != null) {
+            logger.warn("Already in database");
+            return Collections.singletonMap("response", "Already in database");
+        } else {
+            ingredientsRepository.save(ingredient);
+            return Collections.singletonMap("response", "Inserted");
+        }
     }
 
-    @DeleteMapping("/ingredient/{id}")
-    public void deleteIngredient(@PathVariable Long id) {
+    @DeleteMapping(value = "/ingredient/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, String> deleteIngredient(@PathVariable Long id) {
         ingredientsRepository.deleteById(id);
-        logger.info("Removed from database! ");
+        logger.info("Removed from database");
+        return Collections.singletonMap("response", "Removed from database");
     }
 }
