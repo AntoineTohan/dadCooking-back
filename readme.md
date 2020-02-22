@@ -59,7 +59,7 @@ Pour mettre en place facilement la CI du project nous avons créées un docker-c
 ## Commandes utile :
 
 
-Démarrer tous les services avec le Docker-compose : ``docker-compose up -d```
+Démarrer tous les services avec le Docker-compose : ```docker-compose up -d```
 
 
 Mettre en pause les containers avec : ```docker-compose stop```
